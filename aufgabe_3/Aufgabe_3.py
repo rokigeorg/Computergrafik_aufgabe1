@@ -1,3 +1,5 @@
+from typing import List, Any
+
 import pyglet
 import numpy as np
 import cv2
@@ -87,9 +89,35 @@ class GuiImage():
         self.red = rdata.flatten()
         self.green = gdata.flatten()
         self.blue = bdata.flatten()
-        self.rgbData = self.createRgbArray()
+        self.rgbData = self.createRgbA()
 
+    def createRgbA(self):
+        arr = list()  # type: List[Any]
+        onEnd = False
+        i = 0
+        while onEnd:
+            arr[i] = self.red[i]
+            arr[i + 1] = self.red[i]
+            arr[i + 1] = self.red[i]
+            i = i + 3
+            if i == self.width * 3:
+                onEnd = True
+        return arr
 
+    def createRGBImage(self):
+        # set the data to kitten.set_data('RGB', kitten.width * 3, data)
+        ls = self.rgbData
+        pixels = list()
+        for item in ls:
+            pixels.append(int(item))
+        rawData = (GLubyte * len(pixels))(*pixels)
+        # return self.decode_1bit()
+        # return pyglet.image.ImageData(self.width, self.height, "RGB", rawData ,self.width * 3)
+        return pyglet.image.ImageData(self.width, self.height, "RGB", rawData, self.width * 3)
+
+    def getImg(self):
+        return self.createRGBImage()
+'''           
     def createRgbArray(self):
         l = list()
         for i in range(0, self.width * 3):
@@ -100,22 +128,8 @@ class GuiImage():
             else:
                 tmp = self.red[i]
             l.append(tmp)
-        return l
-
-    def createRGBImage(self):
-        # set the data to kitten.set_data('RGB', kitten.width * 3, data)
-        ls = self.rgbData
-        pixels = list()
-        for item in ls:
-            pixels.append(int(item))
-        # rawData = (GLubyte * len(pixels))(*pixels)
-
-        return pyglet.image.ImageData(self.width, self.height, "RGB", self.width * 3, p)
-
-        # return self.decode_1bit()
-
-    def getImg(self):
-        return self.createRGBImage()
+        self.rgbData = l
+'''
 
 
 def gKernel(r):
@@ -146,7 +160,7 @@ def on_draw():
     window.clear()
 
     p = GuiImage(512, 512, "RGB", mRed, mGreen, mBlue).getImg()
-    p.blit(0, 0, 512, 512)
+    p.blit(0, 0)
 
 
 if __name__ == "__main__":
