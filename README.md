@@ -24,7 +24,7 @@ $ pip install pytest-cov Pillow wheel
 
 Install pyglet Module
 ```
-$ pip install pyglet
+$ pip install pyglet astropy numpy
 ```
 
 Quit the VM (only use if needed)
