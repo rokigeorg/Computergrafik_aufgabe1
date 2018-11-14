@@ -1,5 +1,6 @@
 import pyglet
 import numpy as np
+import cv2
 
 # Fenster und seine Eigenschaften definieren
 window = pyglet.window.Window(width=400, height=400, resizable=True, caption='Beispiel zum Zeichnen')
@@ -91,6 +92,9 @@ class GuiImage():
         # set the data to kitten.set_data('RGB', kitten.width * 3, data)
         return pyglet.image.ImageData(self.width, self.height, "RGB", self.width * 3, self.rgbData)
 
+        #return self.decode_1bit()
+
+
     def createRgbArray(self):
         l = list()
 
@@ -101,8 +105,9 @@ class GuiImage():
                 tmp = self.green[i]
             else:
                 tmp = self.red[i]
-            l.append(str(tmp))
+            l.append(tmp)
         return l
+
 
     def getImg(self):
         return self.createRGBImage()
@@ -127,22 +132,24 @@ def start_image_processing():
     mGreen = pimg.faltung(gauss, r, "g")
     mBlue = pimg.faltung(gauss, r, "b")
 
-    return (mRed, mGreen, mBlue)
+    return mRed, mGreen, mBlue
 
 
 # Funktion die beim Zeichnen des Fensters ausgefuehrt wird
 @window.event
 def on_draw():
     window.clear()
-    p = GuiImage(512, 512, "RGB", glst[0], glst[1], glst[2]).getImg()
-    p.blit(0,0,512,512)
+
+
+    #p = GuiImage(512, 512, "RGB", mRed, mGreen, mBlue).getImg()
+    #p.blit(0,0,512,512)
 
 
 if __name__ == "__main__":
     print("******* Gauss image filter ***** ")
 
-    global glst
-    glst = start_image_processing()
+
+    mRed, mGreen, mBlue = start_image_processing()
 
     # x = np.array([2, 3, 4, 5])
     # print(x)
