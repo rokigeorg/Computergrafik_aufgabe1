@@ -86,11 +86,45 @@ class GuiImage():
         self.height = height
         self.width = width
         self.format = format
-        self.red = rdata.flatten()
-        self.green = gdata.flatten()
-        self.blue = bdata.flatten()
-        self.rgbData = self.createRgbA()
+        self.red = rdata
+        self.green = gdata
+        self.blue = bdata
+        self.format_size = 4
+        self.data = self.createRMatrix()
+        self.bytes_per_channel = 1
 
+
+    def createRMatrix(self):
+        data = np.zeros((self.width * self.height, self.format_size), dtype=int)
+
+        for i in range(self.width - 1):
+            for j in range(self.height - 1):
+                # Werte im R-Kanal setzen
+                data[j * self.height + i, 0] = self.red[i][j]
+                # Werte im G-Kanal setzen
+                data[j * self.height + i, 0] = self.green[i][j]
+                # Werte im B-Kanal setzen
+                data[j * self.height + i, 0] = self.blue[i][j]
+                # Werte im A-Kanal alle auf 255 setzen
+                data[j * self.width + i, 3] = 255
+
+        return data
+
+    def createRGBImage(self):
+        # Flatten
+        self.data.shape = -1
+
+        # Konvertierung in Werte, die pyglet erwartet
+        tex_data = (pyglet.gl.GLubyte * self.data.size)(*self.data.astype('uint8'))
+        myimg = pyglet.image.ImageData(self.width, self.height, "RGBA", tex_data,
+                                       pitch=self.width * self.format_size * self.bytes_per_channel)
+        return myimg
+
+    def getImg(self):
+        return self.createRGBImage()
+
+
+'''           
     def createRgbA(self):
         arr = list()  # type: List[Any]
         onEnd = False
@@ -104,20 +138,6 @@ class GuiImage():
                 onEnd = True
         return arr
 
-    def createRGBImage(self):
-        # set the data to kitten.set_data('RGB', kitten.width * 3, data)
-        ls = self.rgbData
-        pixels = list()
-        for item in ls:
-            pixels.append(int(item))
-        rawData = (GLubyte * len(pixels))(*pixels)
-        # return self.decode_1bit()
-        # return pyglet.image.ImageData(self.width, self.height, "RGB", rawData ,self.width * 3)
-        return pyglet.image.ImageData(self.width, self.height, "RGB", rawData, self.width * 3)
-
-    def getImg(self):
-        return self.createRGBImage()
-'''           
     def createRgbArray(self):
         l = list()
         for i in range(0, self.width * 3):
@@ -159,8 +179,10 @@ def start_image_processing():
 def on_draw():
     window.clear()
 
-    p = GuiImage(512, 512, "RGB", mRed, mGreen, mBlue).getImg()
-    p.blit(0, 0)
+    p = GuiImage(512, 512, "RGB", mRed, mGreen, mBlue)
+    p.createRMatrix()
+    img = p.getImg()
+    img.blit(0, 0)
 
 
 if __name__ == "__main__":
