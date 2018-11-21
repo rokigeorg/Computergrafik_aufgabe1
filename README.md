@@ -29,11 +29,12 @@ $ pip install pyglet astropy numpy
 
 Quit the VM (only use if needed)
 ```
-deactivate
+$ deactivate
 ```
 
-### Run App
+### Run App Aufgabe 1
 ```
+$ cd aufgabe_1
 $ python auf1A.py 1 0 4 5
 ```
 The programm args are the started point (x0, y0) and endpoint (x1, y1).
